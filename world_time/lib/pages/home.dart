@@ -9,36 +9,59 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   Map data = {};
+
   @override
-  Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
+  Widget build(BuildContext context)  {
+
+    data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     print(data);
 
+    //choose image
+    String bgImage = data['isDayTime'] ? "day.png" : "night.png";
+    Color bgColor = data['isDayTime'] ? Colors.blue : Colors.indigo;
+
     return Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 120.0, 0,0),
-          child: SafeArea(
-              child: Column(children: [
+       backgroundColor: bgColor,
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/$bgImage'),
+                fit: BoxFit.cover
+              )
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 120.0, 0,0),
+              child: SafeArea(
+                  child: Column(children: [
       FlatButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, '/location');
-            },
-            icon: Icon(Icons.edit_location),
-            label: Text('Edit Location')),
+                onPressed: () async{
+                  dynamic result = await Navigator.pushNamed(context, '/location');
+                  setState(() {
+                            data = result;
+                            print(data);
+                                    });
+                },
+                icon: Icon(Icons.edit_location,
+                color: Colors.grey[300]),
+                label: Text('Edit Location',
+                style: TextStyle(color: Colors.grey[300]),)),
       SizedBox(height: 20.0),
       Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              data['location'],
-              style: TextStyle(fontSize: 28.0, letterSpacing: 2.0),
-            ),
-          ],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  data['location'],
+                  style: TextStyle(fontSize: 28.0, letterSpacing: 2.0, color: Colors.white),
+                ),
+              ],
       ),
       SizedBox(height: 20.0),
       Text(data['time'],
-      style: TextStyle(fontSize: 66.0))
+      style: TextStyle(fontSize: 66.0, color: Colors.white))
     ])),
+            ),
+          ),
         ));
   }
 }

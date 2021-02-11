@@ -8,10 +8,13 @@ class WorldTime {
   String time;
   String flag; // url to an asset icon
   String url; // world time api endpoint location
+  bool isDayTime;
 
   WorldTime({this.location, this.flag, this.url });
 
   Future<void> getTime() async{
+    try{
+
     // request time from worldttimeapi
     Response resp = await get('http://worldtimeapi.org/api/timezone/$url');
     Map data = jsonDecode(resp.body);
@@ -27,6 +30,12 @@ class WorldTime {
     DateTime now = DateTime.parse(dateTime);
     now = now.add(Duration(hours: int.parse(offset)));
     time = DateFormat.jm().format(now);
+    isDayTime = now.hour > 6 && now.hour < 20 ? true : false;
+    }
+    catch(e) {
+      print("caught: $e" );
+      return "Problem getting time";
+    }
     //time = now.toString();
 
    
